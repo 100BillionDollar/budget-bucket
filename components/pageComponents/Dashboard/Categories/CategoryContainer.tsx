@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -19,6 +19,8 @@ const CategoryCard = () => {
    const expenses = useSelectExpenses();
   const isDarkMode = useSelector(selectIsDarkMode);
   const categories=useExpenseCategories(expenses)
+  // console.log(isDarkMode)
+
   
 
   return (

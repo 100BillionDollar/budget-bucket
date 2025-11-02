@@ -13,14 +13,27 @@ import { Button } from "@/components/ui/button";
 import DashboardLayout from "./DashboardLayout";
 import { DrawerDialogDemo } from "@/components/pageComponents/modal";
 import { Toaster } from "react-hot-toast";
+import { selectIsDarkMode } from "@/redux/slices/themeslice";
+import { useSelector } from "react-redux";
 const DashboardPage: React.FC = () => {
   const  [open, setOpen] = useState(false);
+    const isDarkMode = useSelector(selectIsDarkMode);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchExpenses());
       
   }, [dispatch]);
+  useEffect(()=>{
+
+    if(isDarkMode){
+       document.documentElement.classList.add('dark');
+    }else{
+          document.documentElement.classList.remove('dark');
+    }
+
+  },[isDarkMode])
 
   return (
     <DashboardLayout>
