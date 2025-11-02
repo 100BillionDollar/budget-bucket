@@ -15,9 +15,14 @@ export interface CategorySummary {
 }
 
 export function useExpenseCategories(expenses: Expense[]) {
-  // Load saved colors from localStorage once
+  // Check if window is defined (client-side)
+  const isClient = typeof window !== "undefined";
+
+  // Initialize colorMapRef with localStorage check
   const colorMapRef = useRef<Record<string, string>>(
-    JSON.parse(localStorage.getItem("categoryColors") || "{}")
+    isClient && localStorage
+      ? JSON.parse(localStorage.getItem("categoryColors") || "{}")
+      : {}
   );
 
   // Tailwind color palette
@@ -76,10 +81,16 @@ export function useExpenseCategories(expenses: Expense[]) {
     ];
   }, [expenses]);
 
-  // Persist color map changes to localStorage
+  // Persist color map changes to localStorage (client-side only)
   useEffect(() => {
-    localStorage.setItem("categoryColors", JSON.stringify(colorMapRef.current));
-  }, [categories]);
+    if (isClient && localStorage) {
+      try {
+        localStorage.setItem("categoryColors", JSON.stringify(colorMapRef.current));
+      } catch (error) {
+        console.error("Failed to save category colors to localStorage:", error);
+      }
+    }
+  }, [categories, isClient]);
 
   return categories;
 }

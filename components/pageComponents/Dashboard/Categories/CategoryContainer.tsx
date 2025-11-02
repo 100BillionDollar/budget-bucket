@@ -28,7 +28,7 @@ const CategoryCard = () => {
         <CardDescription>Filter by spending category</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 max-h-[400px] overflow-y-scroll scrollbar">
-        {categories.map((category, index) => (
+        {categories?.map((category, index) => (
           <Button
             key={category.name}
             variant={index === 0 ? "secondary" : "ghost"}

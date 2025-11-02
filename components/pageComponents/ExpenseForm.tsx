@@ -15,8 +15,9 @@ import {
 } from "@/redux/slices/expenseslice";
 import { DatePicker } from "@/components/ui/datepicker";
 import { useExpenseCategories } from "../hooks/useExpenseCategories";
+
 interface ExpenseData {
-  id?: string;
+  id?: string | number;
   amount: number;
   category: string;
   description: string;
@@ -33,7 +34,7 @@ interface ExpenseFormProps {
   expenses?: Expense[];
   onSubmit?: (data: ExpenseData) => void;
   onUpdate?: (data: ExpenseData) => void;
-  setOpen?: (value: boolean) => void;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
@@ -46,24 +47,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const currentExpense = useSelector(selectCurrentExpense);
   const isEditMode = !!currentExpense;
 
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const categories=useExpenseCategories(expenses)
-  useEffect(() => {
-    if (currentExpense) {
-      setAmount(currentExpense.amount?.toString() || "");
-      setCategory(currentExpense.category || "");
-      setDescription(currentExpense.description || "");
-      
-     if (currentExpense.date) {
-      setDate(new Date(currentExpense.date)); 
-    }
-    } else {
-      resetForm();
-    }
-  }, [currentExpense]);
+  const [amount, setAmount] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+
+  const categories = useExpenseCategories(expenses);
 
   const resetForm = useCallback(() => {
     setAmount("");
@@ -73,8 +62,21 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     dispatch(clearCurrentExpense());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (currentExpense) {
+      setAmount(currentExpense.amount?.toString() || "");
+      setCategory(currentExpense.category || "");
+      setDescription((currentExpense as any).description || "");
+      if ((currentExpense as any).date) {
+        setDate((currentExpense as any).date);
+      }
+    } else {
+      resetForm();
+    }
+  }, [currentExpense, resetForm]);
+
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (!amount.trim() || !category || !description.trim() || !date) {
@@ -99,11 +101,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         expenseData.id = currentExpense.id;
         dispatch(updateExpense(expenseData));
         toast.success("Expense updated successfully!");
-        setOpen(false)
       } else {
         dispatch(createExpense(expenseData));
         toast.success("Expense added successfully!");
-        setOpen(false)
       }
 
       resetForm();
@@ -113,10 +113,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   );
 
   const handleCancel = useCallback(() => {
-    // resetForm();
     toast("Edit cancelled", { icon: "✖️" });
-         setOpen(false)
-  }, [resetForm]);
+    if (setOpen) setOpen(false);
+  }, [setOpen]);
 
   return (
     <form
@@ -150,8 +149,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
       <div className="space-y-2">
         <Label htmlFor="category">Category</Label>
-
-         <Input
+        <Input
           id="category"
           type="text"
           placeholder="Enter Category"
@@ -159,7 +157,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           onChange={(e) => setCategory(e.target.value)}
           required
         />
-     
       </div>
 
       <div className="space-y-2">

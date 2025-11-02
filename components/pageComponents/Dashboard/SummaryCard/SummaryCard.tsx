@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Card,
   CardContent,
@@ -7,28 +8,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DollarSign, TrendingUp, Calendar } from "lucide-react";
+import { DollarSign, TrendingUp, Calendar, LucideIcon } from "lucide-react";
 
-type BudgetSummaryProps = {
-  cardInfo: {
-    number: string;
-    summaryTitle: string;
-    subtitle?: string;
-  };
-};
+type IconType = "dollar" | "trending" | "calendar";
 
-function BudgetSummary({ cardInfo }: BudgetSummaryProps) {
-    const icons = {
+interface CardInfo {
+  number: string;
+  summaryTitle: string;
+  subtitle?: string;
+  iconType: IconType;
+}
+
+interface BudgetSummaryProps {
+  cardInfo: CardInfo;
+}
+
+const BudgetSummary: React.FC<BudgetSummaryProps> = ({ cardInfo }) => {
+  const icons: Record<IconType, LucideIcon> = {
     dollar: DollarSign,
     trending: TrendingUp,
-    calendar: Calendar
+    calendar: Calendar,
   };
-  
+
   const Icon = icons[cardInfo.iconType];
-  
 
   return (
-       <Card>
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {cardInfo.summaryTitle}
@@ -37,13 +42,14 @@ function BudgetSummary({ cardInfo }: BudgetSummaryProps) {
       </CardHeader>
       <CardContent>
         <div className="text-3xl font-bold">{cardInfo.number}</div>
-        <p className="text-xs text-muted-foreground mt-1">
-          {cardInfo.subtitle}
-        </p>
+        {cardInfo.subtitle && (
+          <p className="text-xs text-muted-foreground mt-1">
+            {cardInfo.subtitle}
+          </p>
+        )}
       </CardContent>
     </Card>
-
   );
-}
+};
 
 export default BudgetSummary;

@@ -67,6 +67,7 @@ const RecentExpensesContainer: React.FC<RecentExpensesContainerProps> = ({
   const categories = useExpenseCategories(expenses);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [budgets, setBudgets] = useState<CategoryBudget[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentExpenseId, setCurrentExpenseId] = useState<string | number | null>(null);
   const [receipts, setReceipts] = useState<Record<string | number, string>>({});
