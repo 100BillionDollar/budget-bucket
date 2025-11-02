@@ -54,14 +54,14 @@ export const fetchExpenseById = createAsyncThunk<Expense, string, { rejectValue:
   'expenses/fetchExpenseById',
   async (expense, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/expenses/${expense.id}`);
+      const res = await fetch(`${API_URL}/expenses/${expense?.id}`);
       if (!res.ok) throw new Error('Failed to fetch expense');
       return await res.json();
     } catch (err) {
       return rejectWithValue(err instanceof Error ? err.message : 'Unknown error');
     }
   }
-);
+); 
 
 export const createExpense = createAsyncThunk<Expense, ExpenseCreateData, { rejectValue: string }>(
   'expenses/createExpense',
