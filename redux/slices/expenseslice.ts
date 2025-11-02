@@ -126,8 +126,10 @@ const initialState: ExpensesState = {
 };
 
 
-const expensesSlice = createSlice({
-  name: 'expenses',
+
+
+const expensesPeriodSlice = createSlice({
+  name: "expenses",
   initialState,
   reducers: {
     clearError: (state) => {
@@ -135,6 +137,9 @@ const expensesSlice = createSlice({
     },
     clearCurrentExpense: (state) => {
       state.currentExpense = null;
+    },
+    setTimePeriod: (state, action: PayloadAction<string>) => {
+      state.timePeriod = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -209,71 +214,8 @@ const expensesSlice = createSlice({
   },
 });
 
-
-const expensesPeriodSlice = createSlice({
-  name: "expenses",
-  initialState,
-  reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
-    clearCurrentExpense: (state) => {
-      state.currentExpense = null;
-    },
-    setTimePeriod: (state, action: PayloadAction<string>) => {
-      state.timePeriod = action.payload;
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      // Fetch
-      .addCase(fetchExpenses.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchExpenses.fulfilled, (state, action) => {
-        state.loading = false;
-        state.expenses = action.payload;
-      })
-      .addCase(fetchExpenses.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-
-      // Create
-      .addCase(createExpense.fulfilled, (state, action) => {
-        state.expenses.push(action.payload);
-      })
-      .addCase(createExpense.rejected, (state, action) => {
-        state.error = action.payload as string;
-      })
-
-      // Update
-      .addCase(updateExpense.fulfilled, (state, action) => {
-        const index = state.expenses.findIndex(
-          (exp) => exp.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.expenses[index] = action.payload;
-        }
-      })
-      .addCase(updateExpense.rejected, (state, action) => {
-        state.error = action.payload as string;
-      })
-
-      // Delete
-      .addCase(deleteExpense.fulfilled, (state, action) => {
-        state.expenses = state.expenses.filter(
-          (exp) => exp.id !== action.payload
-        );
-      })
-      .addCase(deleteExpense.rejected, (state, action) => {
-        state.error = action.payload as string;
-      });
-  },
-});
-
 export const { clearError, clearCurrentExpense,setTimePeriod } = expensesPeriodSlice.actions;
-export default expensesSlice.reducer;
+export default expensesPeriodSlice.reducer;
 
 // Selectors
 export const selectExpenses = (state: { expenses: ExpensesState }) => state.expenses.expenses;

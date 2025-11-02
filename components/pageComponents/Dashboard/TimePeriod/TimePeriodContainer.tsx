@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function ExpensesList() {
   const dispatch = useDispatch();
   
-  const filteredExpenses = useSelector(selectFilteredExpenses);
   const timePeriod = useSelector(selectTimePeriod);
 
   return (
